@@ -1,0 +1,44 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<link type="text/css" href="jqmodal/css/jqModal_blue.css" rel="stylesheet"/>  
+<script type="text/javascript" src="jqmodal/jquery.js"></script>  
+<script type="text/javascript" src="jqmodal/jqModal.js"></script> 
+<script type="text/javascript" src="jqmodal/jqDnR.js"></script> 
+<script type="text/javascript">
+$( function() {   
+	  $('#div').jqm({
+				trigger : '#button',// 触发
+				modal : true,// 限制输入的对话
+				overlay : 50,// 遮罩程度%
+				// ajax: '@href',//ajax请求
+				// ajaxText:'',//ajax返回内容
+				// target : '',//目标元素
+			  })
+			  .jqmAddClose('.close')//添加触发关闭的selector
+			  .jqDrag('.drag');// 添加拖拽的selector //jquery版本不同会影响效果
+		//	  .jqmAddTrigger(''); //添加触发的selector
+	});
+</script> 
+
+</head>
+ <body>
+ 
+<button id="button">button</button>
+
+	<div id="div" class="jqmWindow" style="width:300px;">
+		<div class="drag">用户信息<div class="close"></div></div><br>
+
+		<table align="center">
+			<tr><td>用户:</td><td><input type="text" name="username" ></td></tr>
+			<tr><td>密码:</td><td><input type="text" name="password"></td></tr>
+		</table>
+		<div align="center">
+			<input type="submit" class="input-button" value="提交" />
+			<input type="reset" class="input-button" value="重置" />
+		</div>
+	</div>
+
+</body>
+</html>

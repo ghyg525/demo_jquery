@@ -1,0 +1,106 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Highcharts Example</title>
+
+<script type="text/javascript" src="highcharts/jquery.js"></script>
+<script type="text/javascript" src="highcharts/highcharts.js"></script>
+<script type="text/javascript" src="highcharts/exporting.js"></script>
+
+<script type="text/javascript">
+	$(function () {
+		
+		// 设置图表属性
+		var options = {
+			chart: {		//图表属性
+				type: 'area'	,	//类型(line/column/area)
+			},
+			title: {		// 标题
+			    text: '每月平均气温走向图',
+			    align: 'center',  // 对其方式(默认center)
+			    margin: 30,	//边距(默认15)
+			    x: -20,		// 横向位置(默认0)
+			    y: 10,		//纵向位置(默认15)
+			    style: {		//样式(默认color: '#3E576F',fontSize: '16px')
+			    	color: '#00F',
+			    	fontSize: '20px'
+			    }
+			},
+			subtitle: {		// 副标题(属性同title)
+			    text: '数据来自: WorldClimate.com',	
+			    x: -20
+			},
+			xAxis: {		// 横向x轴
+			    title: {	//横轴标题(属性同title)
+			        text: '月份'
+			    },
+			    tickmarkPlacement: 'on',
+			    categories: []
+			},
+			yAxis: {	// 纵向y轴
+			    title: {
+			        text: '温度 (°C)'
+			    },
+			    plotLines: [{ //标线
+			        value: 0,
+			        width: 1,
+			        color: '#808080'
+			    }]
+			},
+			tooltip: { 	// 提示信息
+				headerFormat: '<span style="font-size:15px">{point.key}</span><br>',
+				valuePrefix: ' ',		//提示前缀
+			    valueSuffix: '(°C)',	// 提示后缀
+			    useHTML: true		// 使用html标签
+			},
+			legend: {	// 图例
+			    layout: 'vertical',	// 布局(horizontal/vertica)
+			    align: 'right',			// 位置(left/center/right)
+			    verticalAlign: 'middle', 	// 垂直位置(top/middle/bottom)
+			    borderWidth: 1		//边框宽度(默认1)
+			},
+			series: [],	// 数据
+			exporting:{	// 保存图片图标
+			    enabled: true	//是否激活
+			},
+			credits: {	// highcharts链接
+			    enabled: false
+			}
+		};
+		
+
+		//获取温度信息后生成图表
+		$.get("weathers", function(data, status){
+			if(status=="success"){
+				options.xAxis.categories = data.month;				// 设置月份数据
+				options.series = (toFloat(data.weather));		//设置温度数据
+				$('#container').highcharts(options);			// 构建图表
+			}else{
+				alert("获取数据失败!");
+			}
+		}, "json");
+	
+		
+		//将字符串数据格式化成float格式
+		function toFloat(data){
+			$.each(data, function(i,d){
+				$.each(d.data, function(j,t){
+					d.data[j] = parseFloat(t);
+				})
+			})
+			return data;
+		}
+
+		
+    });
+
+</script>
+
+</head>
+<body>
+
+	<div id="container" style="min-width: 310px; height: 400px; margin: 0 auto"></div>
+
+</body>
+</html>

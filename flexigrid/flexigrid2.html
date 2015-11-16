@@ -1,0 +1,233 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+	<title>表格显示 可增删改</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+	<link type="text/css" href="flexigrid/css/flexigrid_blue.css" rel="stylesheet"/>
+	<link type="text/css" href="jqmodal/css/jqModal_blue.css" rel="stylesheet"/>  
+	<script type="text/javascript" src="flexigrid/jquery.js"></script>  
+	<script type="text/javascript" src="flexigrid/flexigrid.js"></script>
+	<script type="text/javascript" src="jqmodal/jqModal.js"></script> 
+	<script type="text/javascript" src="jqmodal/jqDnR.js"></script> 
+
+<script type="text/javascript">
+	
+	$(function() {	//flexigrid表格设置
+	    $("#flex").flexigrid({
+		        url : 'userlist',	//ajax方式对应的url地址
+		        dataType : 'json',	//请求数据格式
+		        colModel : [{
+			            display : 'ID',
+			            name : 'userid',
+			            width : 60,	//得加上 要不IE报错
+			            sortable : true,	//是否可被排序
+			            align : 'center'
+		            }, {
+			            display : '用户',
+			            name : 'username',
+			            width : 100,
+			            sortable : true,
+			            align : 'center'
+		            }, {
+			            display : '密码',
+			            name : 'password',
+			            width : 100,
+			            sortable : true,
+			            align : 'center'
+		            }, {
+			            display : '类型',
+			            name : 'usertype',
+			            width : 100,
+			            sortable : true,
+			            align : 'center'
+		            }],
+		        buttons : [{			//按钮组
+			            name : '添加',		//按钮名称
+			            bclass : 'add',	
+			            onpress : test	//点击后处理方法
+		            }, {
+			            separator : true	//设置分割线
+		            }, {
+			            name : '修改',
+			            bclass : 'edit',
+			            onpress : test
+		            }, {
+			            separator : true
+		            }, {
+			            name : '删除',
+			            bclass : 'delete',
+			            onpress : test
+		            }, {
+			            separator : true
+		            }],
+
+			    usepager : true,	//是否使用分页
+		        sortname : 'userid',	//按那一列排序
+		        sortorder : 'asc',	//排序方式
+		        rp : 10,	//每页默认显示数量
+		        
+		        useRp : true,	//是否可动态设置每页显示数量
+		        striped : true,	//是否显示斑纹效果
+		        resizable : false,	//是否可伸缩
+		        nowrap : true, // 是否不换行
+		        checkbox: true,//是否显示第一列的checkbox
+		        showTableToggleBtn : false,	//是否显示表开关
+		        
+		        
+		        errormsg : '发生错误',	//错误提示信息
+		        nomsg : '无相关记录',	//无结果提示信息
+		        procmsg : '正在处理,请稍候 ... ',	//正在处理的提示信息
+		        pagestat : '显示 {from} / {to} 行,共 {total} 行',	// 显示当前页和总页面的样式
+		        
+		        autoload : true,		// 自动加载 
+		        blockOpacity : 1,	// 透明度设置 
+		        minwidth : 30, 	// 列的最小宽度   
+	            minheight : 80,	// 列的最小高度   
+	            
+		        width : 500,	
+		        height : 230,
+		        title : '用户列表'
+	        });
+
+	
+	//定义全局变量,用于在点击相应按钮时动态提交
+	var action="";
+	//点击表格中按钮时执行方法
+	function test(com, grid) {
+		 switch (com) {
+		 
+			 case '添加' :
+				$("#form input[type='text']").each(function() {
+				        $(this).val("");	//将id为form的input标签中带有[]中属性的标签置空
+			        });
+				$('#form input[name="userid"]').val("系统默认");
+				$('#form input[name="usertype"]').val("user");
+				$('#form input[name="username"]').removeAttr("readonly");//为name为username 的标签去除只读属性
+				$('#form').attr("action","add");//为form的action属性赋值
+				action="adduser";
+				$("#usermsg").jqmShow();//显示id为usermsg的标签
+			    break;
+				
+			 case '修改' :
+				selected_count = $('.trSelected', grid).length;
+				if (selected_count == 0) {
+				    alert('请至少选择一条记录!');
+				    return;
+			    }
+			    if (selected_count > 1) {
+				    alert('只能同时修改一条记录!');
+				    return;
+			    }
+			    data = new Array();
+			    $('.trSelected td', grid).each(function(i) {
+				        data[i] = $(this).children('div').text();
+			        });
+			    $('#form input[name="userid"]').val(data[0]);
+			    $('#form input[name="username"]').val(data[1]).attr("readonly","readonly");
+			    $('#form input[name="password"]').val(data[2]);
+			    $('#form input[name="usertype"]').val(data[3]);
+			    action="updateuser";
+			    $("#usermsg").jqmShow();
+			    break;
+			    
+			 case '删除' :
+				selected_count = $('.trSelected', grid).length;
+			    if (selected_count == 0) {
+				    alert('请至少选择一条记录!');
+				    return;
+			    }
+			    names = '';
+			    $('.trSelected td:nth-child(3) div', grid).each(function(i) {
+				        if (i)
+					        names += ',';
+				        names += $(this).text();
+			        });
+			    ids = '';
+			    $('.trSelected td:nth-child(2) div', grid).each(function(i) {
+				        if (i)
+					        ids += ',';
+				        ids += $(this).text();
+			        })
+			    if (confirm("确定删除用户[" + names + "]?")) {
+			    	deleteUser(ids);
+			    }
+			    break;
+		 }
+	}
+		
+	//为submit按钮添加点击事件
+	$("#submit").click(function(){
+		$.ajax({
+	        url : action,
+	        data : $("#form").serialize(),
+	        type : 'POST',
+	        dataType : 'text',
+	        success : function(rs) {
+	        	alert(rs);
+		    	$('#usermsg').jqmHide();
+		        $('#flex').flexReload();
+			}
+		});
+	})
+   
+  	//删除用户方法
+	function deleteUser(ids) {
+    $.ajax({
+	        url : 'deleteuser',
+	        data : {ids : ids},	//发送到服务器的数据。必须为 Key/Value 格式。
+	        type : 'POST',
+	        dataType : 'text',
+	        success : function(rs) {
+	        	alert(rs);
+		        $('#flex').flexReload();//表格重载
+	        }
+        });
+   }
+	
+});
+</script>
+
+
+<script type="text/javascript">
+
+	//初始化jqmodal弹出框并设置参数
+	$( function() {   
+		  $('#usermsg').jqm({
+					trigger : '#button',// 触发
+					modal : true,// 限制输入的对话
+					overlay : 50,// 遮罩程度%
+					// ajax: '@href',//ajax请求
+					// ajaxText:'',//ajax返回内容
+					// target : '',//目标元素
+				  })
+				  .jqmAddClose('.close')//添加触发关闭的selector
+				  .jqDrag('.drag');// 添加拖拽的selector //jquery版本不同会影响效果
+			//	  .jqmAddTrigger(''); //添加触发的selector
+		});
+	
+</script> 
+
+</head>
+<body>
+
+	<table id="flex" ></table>
+
+
+	<div id="usermsg" class="jqmWindow" style="width: 300px;">
+		<div class="drag">用户信息<div class="close"></div></div><br>
+		<form id="form" action="" method="post">
+			<table align="center">
+				<tr><td>ID:</td><td><input type="text" name="userid" readonly></td></tr>
+				<tr><td>用户:</td><td><input type="text" name="username" ></td></tr>
+				<tr><td>密码:</td><td><input type="text" name="password"></td></tr>
+				<tr><td>类型:</td><td><input type="text" name="usertype" readonly></td></tr>
+			</table>
+		
+		<div align="center">
+			<input type="button" id="submit" class="input-button" value="提交" />
+			<input type="reset" class="input-button" value="重置" />
+		</div></form>
+	</div>
+
+</body>
+</html>
