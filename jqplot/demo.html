@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>图标</title>
+	<meta charset="utf-8">
+	<link rel="stylesheet" type="text/css" href="jquery.jqplot.css" /> 
+	<script type="text/javascript" src="jquery.js"></script> 
+	<script type="text/javascript" src="jquery.jqplot.js"></script> 
+	<script type="text/javascript" src="plugins/jqplot.pointLabels.js"></script> 
+	<script type="text/javascript" src="plugins/jqplot.barRenderer.js"></script> 
+	<script type="text/javascript" src="plugins/jqplot.categoryAxisRenderer.js"></script> 
+	<script type="text/javascript" src="plugins/jqplot.canvasTextRenderer.js"></script> 
+	<script type="text/javascript" src="plugins/jqplot.canvasAxisTickRenderer.js"></script> 
+	<script type="text/javascript" src="plugins/jqplot.enhancedLegendRenderer.js"></script>
+	<!--[if lt IE 9]><script type="text/javascript" src="excanvas.js"></script><![endif]--> 
+</head>
+<body>
+<div class="container">
+	
+	<!-- 折线图 -->
+	<div id="div_line_chart" style="height:600px;width:1140px;margin:20 auto;"></div>
+	
+	<br> 
+	
+	<!-- 柱状图 -->
+	<div id="div_bar_chart" style="height:600px;width:1140px;margin:20 auto;"></div> 
+
+</div>
+</body>
+<script>
+var data = [
+		[["2016-09-01",1755],["2016-09-02",1791],["2016-09-03",723],["2016-09-04",1572],["2016-09-05",1736],["2016-09-06",1715],["2016-09-07",1714],["2016-09-08",1692]],
+		[["2016-09-01",1310],["2016-09-02",1346],["2016-09-03",270],["2016-09-04",1151],["2016-09-05",1304],["2016-09-06",1312],["2016-09-07",1291],["2016-09-08",1296]],
+		[["2016-09-01",295],["2016-09-02",291],["2016-09-03",342],["2016-09-04",295],["2016-09-05",300],["2016-09-06",275],["2016-09-07",295],["2016-09-08",268]],
+		[["2016-09-01",150],["2016-09-02",154],["2016-09-03",111],["2016-09-04",126],["2016-09-05",132],["2016-09-06",128],["2016-09-07",128],["2016-09-08",128]]
+	];
+
+$(function(){
+	$.jqplot('div_line_chart', data,{
+		title: '注册用户统计折线图',  // 标题
+		captureRightClick: true, // 禁用右键
+		seriesDefaults : {
+			pointLabels: {  // 显示结点数据
+			    show: true, 
+			},
+        }, 
+		series: [ // 提示工具栏 
+	         {label: '注册总数'},
+	         {label: '美空网站'},
+	         {label: '美空APP'},
+	         {label: '通告APP'},
+		], 
+        legend: { // 提示工具栏
+        	renderer: $.jqplot.EnhancedLegendRenderer, // 可动态显示隐藏
+        	show: true,  // 是否显示
+        	//location: 'nw', // 显示位置 (e:东,w:西,s:南,n:北,nw:西北,ne:东北,sw:西南,se:东南) 
+        	placement: 'outsideGrid' // 显示在图标外部
+        }, 
+        axes: {
+            xaxis: {
+                label: "统计日期",  // x轴显示标题
+            	renderer: $.jqplot.CategoryAxisRenderer,
+				tickRenderer: $.jqplot.CanvasAxisTickRenderer,
+				tickOptions: {
+                    angle:40,  //刻度值与坐标轴夹角，角度为坐标轴正向顺时针方向  
+				}
+            }, 
+            yaxis: {
+                label: "注册数量", // y轴显示标题
+            }
+        }
+	});
+	$.jqplot('div_bar_chart', data,{
+		title: '注册用户统计柱状图',  // 标题
+		captureRightClick: true, // 禁用右键
+		seriesDefaults : {
+            renderer : $.jqplot.BarRenderer, //使用柱状图表示
+			pointLabels: {   // 显示结点数据
+			    show: true, 
+			},
+        }, 
+		series: [ // 提示工具栏 
+		     {label: '注册总数'},
+	         {label: '美空网站'},
+	         {label: '美空APP'},
+	         {label: '通告APP'},
+		], 
+        legend: { // 提示工具栏
+        	renderer: $.jqplot.EnhancedLegendRenderer, // 可动态显示隐藏
+        	show: true,  // 是否显示
+        	//location: 'nw', // 显示位置 (e:东,w:西,s:南,n:北,nw:西北,ne:东北,sw:西南,se:东南) 
+        	placement: 'outsideGrid' // 显示在图标外部
+        }, 
+        axes: {
+            xaxis: {
+                label: "统计日期",  // x轴显示标题
+            	renderer: $.jqplot.CategoryAxisRenderer,
+				tickRenderer: $.jqplot.CanvasAxisTickRenderer,
+				tickOptions: {
+                    angle:40,  //刻度值与坐标轴夹角，角度为坐标轴正向顺时针方向  
+				}
+            }, 
+            yaxis: {
+                label: "注册数量", // y轴显示标题
+            }
+        }
+	});
+});
+</script>
+</html>

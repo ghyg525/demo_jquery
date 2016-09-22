@@ -12,13 +12,17 @@
 
 * highcharts
 
-> 图标插件
+> 图表插件
 
 
 * jqmodal
 
 > 弹出框插件
 
+
+* jqplot
+
+> 图表插件
 
 * jqueryui
 
